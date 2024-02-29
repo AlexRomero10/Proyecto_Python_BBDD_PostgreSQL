@@ -40,18 +40,24 @@ def MostrarMenu():
 def mostrar_empresas_por_localidad(db):
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT Localidad, Nombre FROM EMPRESA ORDER BY Localidad, Nombre")
+        cursor.execute("SELECT Localidad, COUNT(*) FROM EMPRESA GROUP BY Localidad")
         resultados = cursor.fetchall()
         localidad_actual = None
+        total_empresas = 0
         for localidad, nombre_empresa in resultados:
             if localidad != localidad_actual:
-                print(f"Empresa: {nombre_empresa}")
+                print(f"Localidad: {localidad}")
                 localidad_actual = localidad
-            print(f"Localidad: {localidad}")
+            print(f"Nº de empresa: {nombre_empresa}")
+            total_empresas += 1
+        cursor.execute("SELECT COUNT(*) FROM EMPRESA")
+        total_empresas_en_db = cursor.fetchone()[0]
+        print(f"Total de empresas: {total_empresas_en_db}")
     except Exception as e:
         print("Se ha producido un error al ejecutar la consulta:", e)
     finally:
         cursor.close()
+
 
 #Ejercicio2
 def buscar_cargos(conexion, subcadena):
